@@ -1,3 +1,6 @@
+# 本地工具目录（gh CLI 等，不随仓库发布）
+.tools/
+
 # WorkBuddy 本地工作目录（含内部工作日志，不随仓库发布）
 .workbuddy/
 
