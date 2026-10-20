@@ -1,0 +1,46 @@
+# OpenAI 兼容智能体声明（OpenAI Agents SDK / Responses API 风格）
+# 本文件描述 make-knowledge-cards 技能的智能体配置。
+# 完整工作流程请参阅同目录下的 SKILL.md；本文件只做声明式摘要，避免与 SKILL.md 重复。
+
+name: make-knowledge-cards
+version: 1.0.0
+description: >-
+  将用户粘贴的文章或本地 Markdown/TXT 文件提炼为 5-8 张知识卡片
+  （标题、核心知识、简明解释、例子或自测问题）。不支持网页抓取、PDF、Anki 导出与图形界面。
+
+# 默认模型；可按部署环境替换为受支持的模型标识。
+model: gpt-4o
+
+# 指令来源：完整流程在 SKILL.md，智能体须严格遵循。
+instructions_file: SKILL.md
+
+# 可用工具：仅需读取本地文本文件的能力。
+tools:
+  - name: read_file
+    type: file_read
+    purpose: 读取用户提供的本地 .md 或 .txt 文件内容作为原文
+    allowed_extensions: [".md", ".txt"]
+
+# 约束（与 SKILL.md 一致，便于运行时校验）
+constraints:
+  - 不抓取网页、不解析 PDF、不导出 Anki、不使用图形界面
+  - 不编造原文中没有的事实、数据、人物或事件
+  - 不强行凑足 5 张；信息不足时如实产出更少并说明原因
+
+# 卡片结构约定
+card_schema:
+  - 标题
+  - 核心知识
+  - 简明解释
+  - 例子或自测问题
+
+# 产出
+output:
+  format: markdown
+  chat_template: |
+    ## 卡片 N：<标题>
+    **核心知识：** <一句话>
+    **简明解释：** <2-4 句>
+    **例子 / 自测：** <例子或自测问题>
+  file: knowledge-cards.md
+  file_action: overwrite
